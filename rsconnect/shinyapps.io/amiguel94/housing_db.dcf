@@ -1,0 +1,10 @@
+name: housing_db
+title:
+username: amiguel94
+account: amiguel94
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 10732587
+bundleId: 8586757
+url: https://amiguel94.shinyapps.io/housing_db/
+version: 1
