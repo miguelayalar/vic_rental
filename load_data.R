@@ -18,7 +18,6 @@ load_data <- function(dbs_name = 'Median Weekly Rents_202312', path = "data/") {
   
 }
 
-#x <- load_data(path = "data/")
 
 load_data() %>% dplyr::distinct(lga)  %>%
   dplyr::pull(lga) %>%
