@@ -9,6 +9,7 @@ library(fpp3)
 
 lga_rents_url <- "https://www.dffh.vic.gov.au/quarterly-median-rents-local-government-area-december-quarter-2023-excel"
   
+# "https://www.dffh.vic.gov.au/quarterly-median-rents-local-government-area-december-quarter-2023-excel"
 # "https://www.dffh.vic.gov.au/quarterly-median-rents-local-government-area-september-quarter-2023-excel"
 # "https://www.dffh.vic.gov.au/quarterly-median-rents-local-government-area-june-quarter-2023-excel"
 
