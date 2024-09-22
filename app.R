@@ -1,18 +1,20 @@
-#
 
-
+# load libraries ----
 library(shiny)
 library(shinydashboard)
-library(DT)
 library(highcharter)
-source("page_rents.R")
-source("page_vacancy.R")
-source("load_data.R")
-source("viz_vic_rents.R")
-source("viz_vic_vacancies.R")
-source("theme.R")
 
-# Define UI for application that draws a histogram
+
+# load resources ----
+source("R/page_rents.R")
+source("R/page_vacancy.R")
+source("R/load_data.R")
+source("R/viz_vic_rents.R")
+source("R/viz_vic_vacancies.R")
+source("R/theme.R")
+
+
+# UI for application ----
 ui <- function() {
   
   custom_header <- shinydashboard::dashboardHeader()
