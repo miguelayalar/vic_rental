@@ -10,18 +10,19 @@ library(fpp3)
 
 # url and file location ----------
 
-lga_rents_url <- "https://www.dffh.vic.gov.au/quarterly-median-rent-local-government-area-march-quarter-2024-excel"
+lga_rents_url <- "https://www.dffh.vic.gov.au/quarterly-median-rents-local-government-area-june-quarter-2024"
   
-# "https://www.dffh.vic.gov.au/quarterly-median-rents-local-government-area-december-quarter-2023-excel"
+# "https://www.dffh.vic.gov.au/quarterly-median-rent-local-government-area-march-quarter-2024-excel"
 
 
-rents_loc <- tempfile(fileext = ".xlsx", pattern = paste0("LGA_quarterly_median_rents_","2024 Q1_"), tmpdir = "C:\\Users\\MAyala\\Desktop\\shiny\\Housing db\\data-raw")
+rents_loc <- tempfile(fileext = ".xlsx", pattern = paste0("LGA_quarterly_median_rents_","2024 Q2_"), tmpdir = "C:\\Users\\MAyala\\Desktop\\shiny\\vic_rental\\data-raw")
 
 
 # if data is downloaded 
 rents_loc <- "data-raw/LGA_quarterly_median_rents_2024 Q1_48f4316c79bf.xlsx"
-#file <- "data-raw/LGA_quarterly_median_rents_2fe045c21063.xlsx"
-#sheet <- excel_sheets(rents_loc)[7]
+
+file <- "data-raw/LGA_quarterly_median_rents_2024 Q2_678c187bec5.xlsx"
+sheet <- excel_sheets(rents_loc)[7]
 
 
 
@@ -52,6 +53,7 @@ read_sheet <- function(file, sheet, area='LGA') {
       date = case_when(
         #fix error in excel file (duplicate of quarter date)
         date == "Dec 2003" & row_number() < 31 ~ "Dec 2002",
+        date == "Mar 2017" & row_number() > 144 ~ "Jun 2017",
         TRUE ~ date)
       )
   
@@ -135,12 +137,12 @@ vic_rents_ts <- vic_rents |>
   mutate(date = as.Date(date))
 
 
-
+# Note: if tsibble gives an error for duplicated dates, check what dates are duplicated
 #check for duplicates
-#x <- vic_rents %>% duplicates(key = c(lga,dwelling_type, series, region),index = date)
+x <- vic_rents %>% duplicates(key = c(lga,dwelling_type, series, region),index = date)
 
 #export clean data
-write_csv(vic_rents_ts,"data/Median Weekly Rents_202403.csv")
+write_csv(vic_rents_ts,"data/Median Weekly Rents_202406.csv")
 
 
 
