@@ -148,11 +148,11 @@ write_csv(vic_rents_ts,"data/Median Weekly Rents_202406.csv")
 
 # check data ------
 
-a <- vic_rents %>% 
-  filter(
-    series == "Median",
-    dwelling_type == "All Properties",
-    !lga %in% c("Group Total", "Greater Melbourne", "Regional Victoria", "Victoria")
-  )
+# a <- vic_rents %>% 
+#   filter(
+#     series == "Median",
+#     dwelling_type == "All Properties",
+#     !lga %in% c("Group Total", "Greater Melbourne", "Regional Victoria", "Victoria")
+#   )
 
 
