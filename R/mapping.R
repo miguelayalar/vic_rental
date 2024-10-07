@@ -32,7 +32,9 @@ vic_lgas_2022 <- vic_lgas_2022 %>%
 
 vic_rents_latest <- vic_rents %>% 
   filter(!lga %in% c("Group Total", "Victoria")) %>% 
-  filter(date=="2024-06-01" & dwelling_type=="All Properties" & series=="Median" & !is.na(lga)) %>% 
+  filter(date=="2024-06-01" 
+         #& dwelling_type=="3br House" 
+         & series=="Median" & !is.na(lga)) %>% 
   mutate(
     lga_abs = case_when(
       lga=="Mornington Penin'a" ~ "Mornington Peninsula",
@@ -41,21 +43,41 @@ vic_rents_latest <- vic_rents %>%
       TRUE ~ lga
     )
   ) %>% 
-  select(lga, lga_abs, series, value)
+  select(lga, lga_abs, series, value, dwelling_type)
 
 
-# export geopackage
+# export geopackage ----
+
+
+
 
 
 # transform data -----
 a <- vic_lgas_2022 %>% 
   left_join(vic_rents_latest)
 
+b <- a %>% filter(dwelling_type=="All Properties") %>% 
+  select(lga, series, value, dwelling_type) %>% as_Spatial()
 
-s <- mapview(a, zcol = "value",
-             alpha.regions = 0.4, aplha = 1)
+mapviewOptions(basemaps = c("CartoDB.Positron"),
+               verbose = TRUE
+               )
 
+s <- mapview(b, 
+             zcol = "value",
+             legend = TRUE,
+             alpha.regions = 0.4,
+             layer.name = c("Median weekly rents")
+             ) %>% 
+  leaflet::addCircleMarkers(
+    data = b, 
+    popup = leafpop::popupTable(b, 
+                                zcol = c("lga", "dwelling type", "series", "value")
+                                )
+    )
 
 s
 mapview::mapview2leaflet(s)
 
+
+leaflet(a)
