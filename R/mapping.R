@@ -57,7 +57,7 @@ a <- vic_lgas_2022 %>%
   left_join(vic_rents_latest)
 
 b <- a %>% filter(dwelling_type=="All Properties") %>% 
-  select(lga, series, value, dwelling_type) %>% as_Spatial()
+  select(lga, series, value, dwelling_type)
 
 mapviewOptions(basemaps = c("CartoDB.Positron"),
                verbose = TRUE
@@ -65,16 +65,13 @@ mapviewOptions(basemaps = c("CartoDB.Positron"),
 
 s <- mapview(b, 
              zcol = "value",
+             popup = leafpop::popupTable(b,
+                                         zcol = 1:4
+                                         ),
              legend = TRUE,
              alpha.regions = 0.4,
              layer.name = c("Median weekly rents")
-             ) %>% 
-  leaflet::addCircleMarkers(
-    data = b, 
-    popup = leafpop::popupTable(b, 
-                                zcol = c("lga", "dwelling type", "series", "value")
-                                )
-    )
+             )
 
 s
 mapview::mapview2leaflet(s)
