@@ -19,13 +19,8 @@ vic_lgas_2022 <- lgas_2022 %>% filter(state_name_2021=="Victoria")
 vic_rents <- read_csv("data/Median Weekly Rents_202406.csv")
 
 
-vic_lgas_2022$lga_name_2022 %>% unique()
 
-vic_rents$lga %>% unique()
-
-vic_rents %>% filter(is.na(lga))
-
-
+# clean data ----
 vic_lgas_2022 <- vic_lgas_2022 %>% 
   mutate(lga_abs = case_when(
     str_detect(lga_name_2022, "\\(|\\)") ~ str_remove(lga_name_2022, "\\s*\\([^()]*\\)"),
@@ -49,6 +44,10 @@ vic_rents_latest <- vic_rents %>%
   select(lga, lga_abs, series, value)
 
 
+# export geopackage
+
+
+# transform data -----
 a <- vic_lgas_2022 %>% 
   left_join(vic_rents_latest)
 
