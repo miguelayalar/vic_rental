@@ -7,22 +7,28 @@ library(lubridate)
 library(janitor)
 library(fpp3)
 
+# rental report website - https://www.dffh.vic.gov.au/publications/rental-report
 
 # url and file location ----------
 
-lga_rents_url <- "https://www.dffh.vic.gov.au/quarterly-median-rents-local-government-area-june-quarter-2024"
-  
+lga_rents_url <- "https://www.dffh.vic.gov.au/quarterly-median-rent-local-government-area-september-quarter-2024-excel"
+
+
+# "https://www.dffh.vic.gov.au/quarterly-median-rents-local-government-area-june-quarter-2024"
 # "https://www.dffh.vic.gov.au/quarterly-median-rent-local-government-area-march-quarter-2024-excel"
 
 
-rents_loc <- tempfile(fileext = ".xlsx", pattern = paste0("LGA_quarterly_median_rents_","2024 Q2_"), tmpdir = "C:\\Users\\MAyala\\Desktop\\shiny\\vic_rental\\data-raw")
+rents_loc <- tempfile(
+  fileext = ".xlsx", 
+  pattern = paste0("LGA_quarterly_median_rents_","2024 Q3_"), 
+  tmpdir = "C:\\Users\\MAyala\\Desktop\\shiny\\vic_rental\\data-raw")
 
 
-# if data is downloaded 
-rents_loc <- "data-raw/LGA_quarterly_median_rents_2024 Q1_48f4316c79bf.xlsx"
-
-file <- "data-raw/LGA_quarterly_median_rents_2024 Q2_678c187bec5.xlsx"
-sheet <- excel_sheets(rents_loc)[7]
+# if data is downloaded
+# rents_loc <- "data-raw/LGA_quarterly_median_rents_2024 Q1_48f4316c79bf.xlsx"
+# 
+# file <- "data-raw/LGA_quarterly_median_rents_2024 Q2_678c187bec5.xlsx"
+# sheet <- excel_sheets(rents_loc)
 
 
 
@@ -142,7 +148,7 @@ vic_rents_ts <- vic_rents |>
 x <- vic_rents %>% duplicates(key = c(lga,dwelling_type, series, region),index = date)
 
 #export clean data
-write_csv(vic_rents_ts,"data/Median Weekly Rents_202406.csv")
+write_csv(vic_rents_ts,"data/Median Weekly Rents_202409.csv")
 
 
 
