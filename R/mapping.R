@@ -8,7 +8,7 @@ library(strayr)
 library(mapview)
 
 
-#read Victoria boundaries
+# read Victoria boundaries ----
 
 lgas_2022 <- strayr::read_absmap("lga2022")
 
@@ -21,20 +21,27 @@ vic_rents <- read_csv("data/Median Weekly Rents_202409.csv")
 
 
 # clean data ----
+
+# spatial data
 vic_lgas_2022 <- vic_lgas_2022 %>% 
-  mutate(lga_abs = case_when(
-    str_detect(lga_name_2022, "\\(|\\)") ~ str_remove(lga_name_2022, "\\s*\\([^()]*\\)"),
-    TRUE ~ lga_name_2022
-  )) %>% 
-  filter(!lga_name_2022 %in% c("Unincorporated Vic", "No usual address (Vic.)", "Migratory - Offshore - Shipping (Vic.)")
+  mutate(
+    lga_abs = case_when(
+      str_detect(lga_name_2022, "\\(|\\)") ~ str_remove(lga_name_2022, "\\s*\\([^()]*\\)"),
+      TRUE ~ lga_name_2022
+  )
+  ) %>% 
+  filter(!lga_name_2022 %in% c("Unincorporated Vic", 
+                               "No usual address (Vic.)", 
+                               "Migratory - Offshore - Shipping (Vic.)")
   )
 
-
+# rents data
 vic_rents_latest <- vic_rents %>% 
   filter(!lga %in% c("Group Total", "Victoria")) %>% 
-  filter(date=="2024-09-01" 
-         #& dwelling_type=="3br House" 
-         & series=="Median" & !is.na(lga)) %>% 
+  filter(
+    date == "2024-09-01",
+    series=="Median",
+    !is.na(lga)) %>% 
   mutate(
     lga_abs = case_when(
       lga=="Mornington Penin'a" ~ "Mornington Peninsula",
@@ -58,7 +65,8 @@ write_sf(a, "data/vic_rents.gpkg")
 
 a <- st_read("data/vic_rents.gpkg")
 
-b <- a %>% filter(dwelling_type=="All Properties") %>% 
+b <- a %>% 
+  filter(dwelling_type=="All Properties") %>% 
   select(lga, series, value, dwelling_type)
 
 
@@ -66,6 +74,7 @@ b <- a %>% filter(dwelling_type=="All Properties") %>%
 mapviewOptions(basemaps = c("CartoDB.Positron"),
                verbose = TRUE
                )
+
 b$Median <- paste("$", b$value, sep = "")
 
 
