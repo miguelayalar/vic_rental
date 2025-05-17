@@ -37,22 +37,27 @@ data_list <- function(){
     "map_rents" = dbs_files[3]
   )
   
-  map(dbs_names, .f = load_data)
+  d <- map(dbs_names, .f = load_data)
+  
+  return(d)
+  
 }
 
+datalist <- data_list()
 
+saveRDS(datalist, "output/datalist.rds")
 
-data_list()$rental %>% 
-  filter(!lga %in% c("Group Total", "Greater Melbourne", "Regional Victoria", "Victoria")) %>% 
-  dplyr::distinct(lga)  %>%
-  dplyr::pull(lga) %>%
-  assign("lgas", ., envir = .GlobalEnv)
-
-data_list()$rental %>% 
-  dplyr::distinct(region)  %>%
-  dplyr::pull(region) %>%
-  assign("regions", ., envir = .GlobalEnv)
-
-data_list()$vacancy %>% select(-1) %>% names() %>% 
-  assign("areas", ., envir = .GlobalEnv)
+# data_list()$rental %>% 
+#   filter(!lga %in% c("Group Total", "Greater Melbourne", "Regional Victoria", "Victoria")) %>% 
+#   dplyr::distinct(lga)  %>%
+#   dplyr::pull(lga) %>%
+#   assign("lgas", ., envir = .GlobalEnv)
+# 
+# data_list()$rental %>% 
+#   dplyr::distinct(region)  %>%
+#   dplyr::pull(region) %>%
+#   assign("regions", ., envir = .GlobalEnv)
+# 
+# data_list()$vacancy %>% select(-1) %>% names() %>% 
+#   assign("areas", ., envir = .GlobalEnv)
 
