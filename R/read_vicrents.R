@@ -5,39 +5,47 @@ library(readxl)
 library(tidyverse)
 library(lubridate)
 library(janitor)
-library(fpp3)
-
-# rental report website - https://www.dffh.vic.gov.au/publications/rental-report
+library(tsibble)
 
 # url and file location ----------
 
-lga_rents_url <- "https://www.dffh.vic.gov.au/quarterly-median-rent-local-government-area-september-quarter-2024-excel"
+# function to download raw data from website
+
+download_dffh <- function(filename){
+
+  # base url
+  base <- "https://www.dffh.vic.gov.au/"
+  
+  url <- paste0(base, filename)
+  year_file <- str_extract(filename, "\\d+\\.?\\d*")
+  qrt_file <- str_extract(tolower(filename), "march|june|september|december")
+
+  qrt_file <- case_when(
+    qrt_file=="march" ~ "1",
+    qrt_file=="june" ~ "2",
+    qrt_file=="september" ~ "3",
+    qrt_file=="december" ~ "4"
+    )
+  
+    
+  # create a temp file
+  rents_loc <- tempfile(
+    fileext = ".xlsx", 
+    pattern = paste0("LGA_quarterly_median_rents_",year_file," Q", qrt_file,"_"), 
+    tmpdir = "C:\\Users\\MAyala\\Desktop\\shiny\\vic_rental\\data-raw"
+  )
+  
+  download.file(url = url,
+                destfile = rents_loc,
+                mode = "wb")
+  
+}
+
+# filename
+f <- "quarterly-median-rents-local-government-area-december-quarter-2024-excel"
 
 
-# "https://www.dffh.vic.gov.au/quarterly-median-rents-local-government-area-june-quarter-2024"
-# "https://www.dffh.vic.gov.au/quarterly-median-rent-local-government-area-march-quarter-2024-excel"
-
-
-rents_loc <- tempfile(
-  fileext = ".xlsx", 
-  pattern = paste0("LGA_quarterly_median_rents_","2024 Q3_"), 
-  tmpdir = "C:\\Users\\MAyala\\Desktop\\shiny\\vic_rental\\data-raw")
-
-
-# if data is downloaded
-# rents_loc <- "data-raw/LGA_quarterly_median_rents_2024 Q1_48f4316c79bf.xlsx"
-# 
-# file <- "data-raw/LGA_quarterly_median_rents_2024 Q2_678c187bec5.xlsx"
-# sheet <- excel_sheets(rents_loc)
-
-
-
-# download and clean raw data ------
-
-download.file(url = lga_rents_url,
-              destfile = rents_loc,
-              mode = "wb")
-
+download_dffh(filename = f)
 
 
 # function to read and clean rents raw data ----
@@ -125,14 +133,17 @@ read_sheet <- function(file, sheet, area='LGA') {
 }
 
 
+# filename
+file <- "data-raw/LGA_quarterly_median_rents_2024 Q4_a70410d6dce.xlsx"
+
 # extract tab names
-sheets <- excel_sheets(rents_loc)
+sheets <- excel_sheets(file)
 
 
 #compiles all rents data
 vic_rents <- map_dfr(.x = sheets, area = "LGA",
                      .f = read_sheet,
-                     file = rents_loc)
+                     file = file)
 
 
 #convert to tsibble
@@ -145,20 +156,12 @@ vic_rents_ts <- vic_rents |>
 
 # Note: if tsibble gives an error for duplicated dates, check what dates are duplicated
 #check for duplicates
-x <- vic_rents %>% duplicates(key = c(lga,dwelling_type, series, region),index = date)
+vic_rents %>% duplicates(key = c(lga,dwelling_type, series, region),index = date)
+
+
 
 #export clean data
-write_csv(vic_rents_ts,"data/Median Weekly Rents_202409.csv")
+write_csv(vic_rents_ts,"data/Median Weekly Rents_202412.csv")
 
-
-
-# check data ------
-
-# a <- vic_rents %>% 
-#   filter(
-#     series == "Median",
-#     dwelling_type == "All Properties",
-#     !lga %in% c("Group Total", "Greater Melbourne", "Regional Victoria", "Victoria")
-#   )
 
 

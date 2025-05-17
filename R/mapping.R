@@ -15,8 +15,7 @@ lgas_2022 <- strayr::read_absmap("lga2022")
 vic_lgas_2022 <- lgas_2022 %>% filter(state_name_2021=="Victoria")
 
 # read rents data
-
-vic_rents <- read_csv("data/Median Weekly Rents_202409.csv")
+vic_rents <- read_csv("data/Median Weekly Rents_202412.csv")
 
 
 
@@ -36,10 +35,10 @@ vic_lgas_2022 <- vic_lgas_2022 %>%
   )
 
 # rents data
-vic_rents_latest <- vic_rents %>% 
+vic_rents_latest <- vic_rents %>%
+  slice_max(date) %>% 
   filter(!lga %in% c("Group Total", "Victoria")) %>% 
   filter(
-    date == "2024-09-01",
     series=="Median",
     !is.na(lga)) %>% 
   mutate(
@@ -55,38 +54,38 @@ vic_rents_latest <- vic_rents %>%
 
 # export geopackage ----
 
-a <- vic_lgas_2022 %>% 
+lgas <- vic_lgas_2022 %>% 
   left_join(vic_rents_latest)
 
-write_sf(a, "data/vic_rents.gpkg")
+write_sf(lgas, "data/vic_rents.gpkg")
 
 
 # transform data -----
 
-a <- st_read("data/vic_rents.gpkg")
-
-b <- a %>% 
-  filter(dwelling_type=="All Properties") %>% 
-  select(lga, series, value, dwelling_type)
-
-
-  
-mapviewOptions(basemaps = c("CartoDB.Positron"),
-               verbose = TRUE
-               )
-
-b$Median <- paste("$", b$value, sep = "")
-
-
-s <- mapview(b, 
-             zcol = "value",
-             popup = leafpop::popupTable(b,
-                                         zcol = c("lga","Median")
-                                         ),
-             legend = TRUE,
-             alpha.regions = 0.4,
-             layer.name = c("Median weekly rents")
-             )
-
-s
+# a <- st_read("data/vic_rents.gpkg")
+# 
+# b <- lgas %>% 
+#   filter(dwelling_type=="All Properties") %>% 
+#   select(lga, series, value, dwelling_type)
+# 
+# 
+# 
+# mapviewOptions(basemaps = c("CartoDB.Positron"),
+#                verbose = TRUE
+#                )
+# 
+# b$Median <- paste("$", b$value, sep = "")
+# 
+# 
+# s <- mapview(b, 
+#              zcol = "value",
+#              popup = leafpop::popupTable(b,
+#                                          zcol = c("lga","Median")
+#                                          ),
+#              legend = TRUE,
+#              alpha.regions = 0.4,
+#              layer.name = c("Median weekly rents")
+#              )
+# 
+# s
 
