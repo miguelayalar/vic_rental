@@ -21,28 +21,34 @@ download_dffh <- function(filename){
   qrt_file <- str_extract(tolower(filename), "march|june|september|december")
 
   qrt_file <- case_when(
-    qrt_file=="march" ~ "1",
-    qrt_file=="june" ~ "2",
-    qrt_file=="september" ~ "3",
-    qrt_file=="december" ~ "4"
+    qrt_file=="march" ~ " Q1",
+    qrt_file=="june" ~ " Q2",
+    qrt_file=="september" ~ " Q3",
+    qrt_file=="december" ~ " Q4"
     )
   
     
   # create a temp file
   rents_loc <- tempfile(
     fileext = ".xlsx", 
-    pattern = paste0("LGA_quarterly_median_rents_",year_file," Q", qrt_file,"_"), 
+    pattern = paste0("LGA_quarterly_median_rents_",year_file, qrt_file,"_"), 
     tmpdir = "C:\\Users\\MAyala\\Desktop\\shiny\\vic_rental\\data-raw"
   )
   
-  download.file(url = url,
-                destfile = rents_loc,
-                mode = "wb")
+  curl::curl_download(url = url,
+                      destfile = rents_loc,
+                      mode = "wb")
   
 }
 
 # filename
-f <- "quarterly-median-rents-local-government-area-december-quarter-2024-excel"
+f <- "quarterly-median-rents-local-government-area-march-quarter-2025-excel"
+
+# httr::GET(
+#   url,
+#   httr::write_disk(rents_loc, overwrite = TRUE),
+#   httr::user_agent("Mozilla/5.0")
+# )
 
 
 download_dffh(filename = f)
@@ -134,7 +140,7 @@ read_sheet <- function(file, sheet, area='LGA') {
 
 
 # filename
-file <- "data-raw/LGA_quarterly_median_rents_2024 Q4_a70410d6dce.xlsx"
+file <- "data-raw/LGA_quarterly_median_rents_2025 Q1_11745236f6b.xlsx"
 
 # extract tab names
 sheets <- excel_sheets(file)
@@ -161,7 +167,7 @@ vic_rents %>% duplicates(key = c(lga,dwelling_type, series, region),index = date
 
 
 #export clean data
-write_csv(vic_rents_ts,"data/Median Weekly Rents_202412.csv")
+write_csv(vic_rents_ts,"data/Median Weekly Rents_202503.csv")
 
 
 
