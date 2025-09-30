@@ -5,7 +5,6 @@ library(tidyverse)
 library(leaflet)
 library(sf)
 library(strayr)
-library(mapview)
 
 
 # read Victoria boundaries ----
@@ -36,7 +35,6 @@ vic_lgas_2022 <- vic_lgas_2022 %>%
 
 # rents data
 vic_rents_latest <- vic_rents %>%
-  #slice_max(date) %>% 
   filter(!lga %in% c("Group Total", "Victoria")) %>% 
   filter(
     date >= "2018-03-01", 
