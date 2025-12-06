@@ -1,4 +1,6 @@
 
+# remotes::install_github("runapp-aus/strayr")
+
 # packages --------
 library(readxl)
 library(tidyverse)
@@ -14,7 +16,7 @@ lgas_2022 <- strayr::read_absmap("lga2022")
 vic_lgas_2022 <- lgas_2022 %>% filter(state_name_2021=="Victoria")
 
 # read rents data
-vic_rents <- read_csv("data/Median Weekly Rents_202503.csv")
+vic_rents <- read_csv("data/Median Weekly Rents_202506.csv")
 
 
 
