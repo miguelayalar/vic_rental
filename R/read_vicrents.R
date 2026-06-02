@@ -48,7 +48,7 @@ download_dffh <- function(filename){
 }
 
 # filename
-f <- "quarterly-median-rents-local-government-area-june-quarter-2025-excel"
+f <- "quarterly-median-rents-local-government-area-september-quarter-2025-excel"
 
 
 download_dffh(filename = f)
@@ -126,21 +126,22 @@ read_sheet <- function(file, sheet, area='LGA') {
       region = case_when(
         str_detect(region, "METRO NON-METRO|Table Total") & lga == "Metro" ~ "Metro",
         str_detect(region, "METRO NON-METRO|Table Total") & lga == "Non-Metro" ~ "Non-Metro",
-        str_detect(region, "METRO NON-METRO|Table Total") & lga == "Victoria" ~ "All",
+        str_detect(region, "METRO NON-METRO") & lga == "Victoria" ~ "All",
+        str_detect(region, "Table Total") & lga == "Victoria" ~ "Other",
         TRUE ~ region
         ),
       lga = case_when(
         lga == "Metro" ~ "Greater Melbourne",
         lga == "Non-Metro" ~ "Regional Victoria",
         TRUE ~ lga)) %>% 
-    filter(!region %in% c("Table Total","METRO NON-METRO"))
+    filter(!region %in% c("Table Total","METRO NON-METRO", "Other"))
   
   return(tidy_df)
 }
 
 
 # filename
-file <- "data-raw/LGA_quarterly_median_rents_2025 Q2_65809fb574c.xlsx"
+file <- "data-raw/LGA_quarterly_median_rents_2025 Q3_6e9073276e8a.xlsx"
 
 # extract tab names
 sheets <- excel_sheets(file)
@@ -151,6 +152,7 @@ vic_rents <- map_dfr(.x = sheets, area = "LGA",
                      .f = read_sheet,
                      file = file) %>% 
   filter(!is.na(lga))
+
 
 
 #convert to tsibble
@@ -168,7 +170,7 @@ vic_rents %>% duplicates(key = c(lga,dwelling_type, series, region), index = dat
 
 
 #export clean data
-write_csv(vic_rents_ts,"data/Median Weekly Rents_202506.csv")
+write_csv(vic_rents_ts,"data/Median Weekly Rents_202509.csv")
 
 
 

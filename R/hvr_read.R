@@ -10,15 +10,29 @@ haver.direct(1)
 hvr_codes <- c("VIMEHNV", "VI28NHNV", "VIEMNHNV", "VIIENHNV", "VI21NHNV", "VINMNHNV",
                "VIWTNHNV", "VIMZNHNV", "VISMNHNV", "VIMWNHNV")
 
-clean_names <- c("Melbourne", "Bayside", "Eastern Melbourne", "Inner Eastern Melbourne", "Melbourne City",
+hvr_codes_sqmvac <- c("VIMEJA", 
+                      "VI28JA", 
+                      "VIEMJA", 
+                      "VIIEJA", 
+                      "VI21JA", 
+                      "VINMJA",
+                      "VIWTJA", 
+                      "VIMZJA", 
+                      "VISMJA", 
+                      "VIMWJA")
+
+
+clean_names <- c("Melbourne", "Bayside", "Eastern Melbourne", "Inner Eastern Melbourne", 
+                 "Melbourne City",
                  "Melbourne North", "North West Melbourne", "South East Melbourne",
                  "South West Melbourne", "Western Melbourne")
 
-code_names <- tibble(hvr_codes, clean_names) %>% 
-  mutate(hvr_codes = tolower(hvr_codes))
+code_names <- tibble(hvr_codes_sqmvac, clean_names) %>% 
+  mutate(hvr_codes = tolower(hvr_codes_sqmvac))
 
 
-hvr_sqm <- haver.data(codes = hvr_codes, database = "ANZR", rtype = 'data.frame') %>% 
+hvr_sqm <- haver.data(codes = hvr_codes_sqmvac,#"VIMEHNV", 
+                      database = "SQMVAC", rtype = 'data.frame') %>% 
   as_tibble(rownames = "date") %>% 
   dplyr::mutate(date = as_date(paste0(date,"-01")))
 
@@ -30,7 +44,7 @@ hvr_sqm_long <- hvr_sqm %>%
 names(hvr_sqm) <- c("dates", clean_names)
 
 # export data
-write_xlsx(hvr_sqm, "data-raw/SQM/vacany rates vic.xlsx")
+write_xlsx(hvr_sqm, "data-raw/SQM/vacany rates vic_haver.xlsx")
 
 
 
